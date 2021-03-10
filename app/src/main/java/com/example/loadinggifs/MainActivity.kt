@@ -4,13 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.example.loadinggifs.model.network.Data
+import com.example.loadinggifs.model.network.ImageData
 import com.example.loadinggifs.model.network.GifApiServiceImpl
 import com.example.loadinggifs.model.network.GifResponse
 import com.example.loadinggifs.view.GifsAdapter
@@ -21,9 +19,13 @@ import retrofit2.Callback
 class MainActivity : AppCompatActivity() {
 
 
+    private val IMAGE_DATA_KAY = "image_kay"
+
     private lateinit var gifsAdapter: GifsAdapter
     private lateinit var gifsListView: RecyclerView
     private lateinit var progressBar: ProgressBar
+
+    private var imageDataList = emptyList<ImageData>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,13 +42,32 @@ class MainActivity : AppCompatActivity() {
 
         gifsListView.adapter = gifsAdapter
 
-        loadGifs()
+        if (savedInstanceState == null) {
+            loadGifs()
+        }
 
     }
 
-    private fun onItemClicked(data: Data) {
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        savedInstanceState.getParcelableArrayList<ImageData>(IMAGE_DATA_KAY)?.takeIf { it.isNotEmpty() }?.let { ArrListImage ->
+            imageDataList = ArrListImage
+            gifsAdapter.submitList(ArrListImage)
+            setProgressVisibility(false)
+        } ?: run {
+            loadGifs()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList(IMAGE_DATA_KAY,ArrayList(imageDataList))
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun onItemClicked(imageData: ImageData) {
         val fullScreenIntent = Intent(this, BigGif::class.java).apply {
-            putExtra("url", data)
+            putExtra("url", imageData)
         }
         startActivity(fullScreenIntent)
     }
@@ -77,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         override fun onFailure(call: Call<GifResponse>, t: Throwable) {
             setProgressVisibility(false)
             repeat(30) {
-                Toast.makeText(this@MainActivity, "it's pailure", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "it's failure", Toast.LENGTH_SHORT).show()
             }
             Log.d(MainActivity::javaClass.name, "Api call failed", t)
         }

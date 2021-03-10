@@ -2,19 +2,16 @@ package com.example.loadinggifs
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.example.loadinggifs.model.network.Data
+import com.example.loadinggifs.model.network.ImageData
 
 class BigGif : AppCompatActivity() {
+
     private val imageView: ImageView by lazy { findViewById(R.id.fullImage) }
-
-
-    private lateinit var send: ImageView
+    private val send: ImageView by lazy { findViewById(R.id.chatButton) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +19,7 @@ class BigGif : AppCompatActivity() {
 
         setContentView(R.layout.full_screen_image)
 
-        val url = intent.getParcelableExtra<Data>("url")
+        val url = intent.getParcelableExtra<ImageData>("url")
 
         url?.let {
             loadImage(it.images.downsized_medium.url)
@@ -34,19 +31,21 @@ class BigGif : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
         }
 
-        send = findViewById(R.id.chatButton)
         send.setOnClickListener {
             url?.let {  sendUrl(it.images.downsized_medium.url) }
         }
     }
     private fun sendUrl(url: String){
-        val intent = Intent(Intent.ACTION_SEND)
-        val messange:String ="Hello oreld this my app send for you this text and URL ${url} \n " +
+
+        val messange : String ="Hello oreld this my app send for you this text and URL ${url} \n " +
                 "but I did not fully understand how to do that😉😉" +
                 "\n Benaya"
+        val SendIntent = Intent().apply{
+            action =Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, messange)
+        }
 
-        intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, messange)
         startActivity(Intent.createChooser(intent, "sher to :"))
     }
 

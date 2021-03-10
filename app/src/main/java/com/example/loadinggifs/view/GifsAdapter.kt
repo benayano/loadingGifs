@@ -7,15 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loadinggifs.R
-import com.example.loadinggifs.model.network.Data
+import com.example.loadinggifs.model.network.ImageData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.transition.DrawableCrossFadeTransition
 
 class GifsAdapter:RecyclerView.Adapter<GifViewHolder>() {
 
-    var giflist:List<Data> = emptyList()
-    var clickListener:((Data)-> Unit)? = null
+    var giflist:List<ImageData> = emptyList()
+    var clickListener:((ImageData)-> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         GifViewHolder(
@@ -35,7 +34,7 @@ class GifsAdapter:RecyclerView.Adapter<GifViewHolder>() {
 
     override fun getItemCount() = giflist.size
 
-    fun submitList(gifList: List<Data>){
+    fun submitList(gifList: List<ImageData>){
         this.giflist =gifList
         notifyDataSetChanged()
     }

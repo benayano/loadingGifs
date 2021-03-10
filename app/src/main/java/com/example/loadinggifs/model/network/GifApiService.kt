@@ -6,5 +6,5 @@ import retrofit2.http.Query
 
 interface GifApiService {
     @GET("gifs/trending")
-    fun fetchTrendingGifs(@Query("api_key")apiKey:String):Call<GifResponse>
+    fun fetchTrendingGifs(@Query("api_key")apiKey:String,@Query("limit")limit:Int =20):Call<GifResponse>
 }
